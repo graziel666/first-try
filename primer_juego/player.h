@@ -1,12 +1,12 @@
 #ifndef PLAYER_H
 #define PLAYER_H
 #include "globals.h"
-#include "bitmaps.h"
 
 byte frame = 0;
 byte x = 0;
-byte y = 30;
+byte y = 16*2;
 char dir = 'R'; //L,R
+bool walking = false;
 
 #define CharW 16
 #define CharH 16
@@ -17,35 +17,36 @@ char dir = 'R'; //L,R
 
 void playerMove(){
 
-  
     
   if (arduboy.pressed(RIGHT_BUTTON) && (x < MaxX)){
+    walking = true;
     x++;
-    frame = 0;
-    if (arduboy.everyXFrames(12)){ frame ++;}
-    if (frame > 2) frame = 0;
+    if (arduboy.everyXFrames(8)) frame ++;
+    if (frame > 4) frame = 1;
     dir = 'R';
   }
+
   
   if (arduboy.pressed(LEFT_BUTTON) && (x > 0)){
+    walking = true;
     x--;
-    frame = 0;
-    if (arduboy.everyXFrames(13)) frame++;
-    if (frame > 2) frame = 0;
+    if (arduboy.everyXFrames(8)) frame++;
+    if (frame > 4) frame = 1;
     dir = 'L';
   }
 
-  if (arduboy.justReleased(LEFT_BUTTON)) frame = 0;
+  if (walking && arduboy.notPressed(RIGHT_BUTTON) && arduboy.notPressed(LEFT_BUTTON)) walking = false;
+  if (!walking) frame = 0;
 
-  if (arduboy.justReleased(RIGHT_BUTTON)) frame = 0;
+  
 
   if (dir == 'L'){
-    sprites.drawPlusMask(x,y,PjWalkingLeft,frame);
+    sprites.drawPlusMask(x,MaxY,PjWalkingLeft,frame);
   }
 
   
   if (dir == 'R'){
-    sprites.drawPlusMask(x,y,PjWalkingRight,frame);
+    sprites.drawPlusMask(x,MaxY,PjWalkingRight,frame);
   }
 
   

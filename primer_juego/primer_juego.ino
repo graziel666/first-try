@@ -8,12 +8,13 @@ primer juego
 #include "player.h"
 #include "enemy.h"
 #include "main.h"
+#include "map.h"
 
 
 
 void setup() {
   arduboy.begin();
-  arduboy.setFrameRate(35);
+  arduboy.setFrameRate(45);
   arduboy.display();
   //arduboy.initRandomSeed();
   arduboy.clear();
@@ -23,13 +24,10 @@ void loop() {
   if (!(arduboy.nextFrame())){
     return;
   }
-  
-  arduboy.pollButtons();
-
-  
   arduboy.clear();
   arduboy.setCursor(x,y);
-  
+
+  drawMap();
   playerMove();
 
   arduboy.display();
