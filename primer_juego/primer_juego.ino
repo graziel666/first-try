@@ -30,6 +30,11 @@ void loop() {
   drawMap();
   playerMove();
 
+    arduboy.setCursor(0,0);
+    arduboy.print(mapX);
+    arduboy.setCursor(10,10);
+    arduboy.print(playerY);
+
   arduboy.display();
     
 }
