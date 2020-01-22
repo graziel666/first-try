@@ -9,6 +9,7 @@ primer juego
 #include "enemy.h"
 #include "main.h"
 #include "map.h"
+#include "states.h"
 
 
 
@@ -33,7 +34,7 @@ void loop() {
     arduboy.setCursor(0,0);
     arduboy.print(mapX);
     arduboy.setCursor(10,10);
-    arduboy.print(playerY);
+    arduboy.print(playerVelocityY);
 
   arduboy.display();
     

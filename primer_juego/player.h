@@ -3,9 +3,9 @@
 #include "globals.h"
 #include "map.h"
 
-byte frame = 0;
-byte x = 16;
-byte y = 16*2;
+uint8_t frame = 0;
+uint8_t x = 16;
+uint8_t y = 16*2;
 char dir = 'R'; //L,R
 bool walking = false;
 
@@ -14,7 +14,14 @@ bool walking = false;
 #define MaxX (WIDTH - tileSize )
 #define MaxY (HEIGHT - CharH*2+3)
 #define MinX 16
-int playerY = 35;
+
+//jump
+uint8_t groundLevel = 35;
+uint8_t playerY = 35;
+int playerVelocityY;
+uint8_t gravity = 1;
+
+
 
 
 void Walking(){
@@ -29,36 +36,67 @@ void Walking(){
 void playerMove(){
 
 //moving player and map
-    if (arduboy.pressed(RIGHT_BUTTON) && (x < MaxX)){
-    Walking();
-    x++;
-    dir = 'R';
+    if (arduboy.pressed(RIGHT_BUTTON)){
+  //player movement
+    if (x < MaxX){
+      Walking();
+      x++;
+      dir = 'R';
+    }
+  //map movement
+    if (x == MaxX && mapX < mapMaxY){
+      Walking();
+      mapX++;
+    }
   }
-  if (arduboy.pressed(RIGHT_BUTTON) && x == MaxX && mapX > -114){
+  /*if (arduboy.pressed(RIGHT_BUTTON) && x == MaxX && mapX < 114){
+    Walking();
+    mapX++;
+  }*/
+  
+
+  
+  if (arduboy.pressed(LEFT_BUTTON)){
+  //player movement
+    if (x > MinX){
+      Walking();
+    x--;
+    dir = 'L';
+    }
+
+  //map movement
+  if (x == MinX && mapX > 0 && mapX <= mapMaxY){
     Walking();
     mapX--;
   }
-  
-
-  
-  if (arduboy.pressed(LEFT_BUTTON) && (x > MinX)){
-    Walking();
-    x--;
-    dir = 'L';
   }
 
-  if (arduboy.pressed(LEFT_BUTTON)&& x == MinX && mapX < 0 && mapX >= -114) {
+  /*if (arduboy.pressed(LEFT_BUTTON)&& x == MinX && mapX > 0 && mapX <= 114) {
     Walking();
-    mapX++;
+    mapX--;*/
     
     
-  }
+  
 
 //jump
   if (arduboy.pressed(A_BUTTON)){
-     playerY-=2;
+     if (playerY == groundLevel){
+      playerVelocityY = -7;
+     }
+
     
   }
+
+//moving player up or down
+  if (playerVelocityY < 0) playerY += playerVelocityY;
+
+  if (playerVelocityY < 0) playerVelocityY += gravity;
+
+  if (playerY < groundLevel) playerY += gravity%playerVelocityY;
+
+//stop
+  if (playerY > groundLevel) playerY = groundLevel;
+
 
 //animation reset
   if (walking && arduboy.notPressed(RIGHT_BUTTON) && arduboy.notPressed(LEFT_BUTTON)) walking = false;
