@@ -1,16 +1,22 @@
+#pragma once
+
 #ifndef PLAYER_H
 #define PLAYER_H
 #include "globals.h"
 #include "map.h"
 
+bool isWalking  = false;
+
+
+enum class HorizontalDirection : uint8_t {Left, Right};
+
 uint8_t frame = 0;
 uint8_t x = 16;
 uint8_t y = 16*2;
-char dir = 'R'; //L,R
-bool walking = false;
+HorizontalDirection playerDir = HorizontalDirection::Right; //Left,Right
 
-#define CharW 16
-#define CharH 16
+constexpr uint8_t CharW = 16;
+constexpr uint8_t  CharH = 16;
 #define MaxX (WIDTH - tileSize )
 #define MaxY (HEIGHT - CharH*2+3)
 #define MinX 16
@@ -24,8 +30,9 @@ uint8_t gravity = 1;
 
 
 
-void Walking(){
-  walking = true;
+void WalkingAnim(){
+
+  isWalking = true;
    
     if (arduboy.everyXFrames(8)) frame ++;
     if (frame > 4) frame = 1;
@@ -39,13 +46,13 @@ void playerMove(){
     if (arduboy.pressed(RIGHT_BUTTON)){
   //player movement
     if (x < MaxX){
-      Walking();
+      WalkingAnim();
       x++;
-      dir = 'R';
+      playerDir = HorizontalDirection::Right;
     }
   //map movement
     if (x == MaxX && mapX < mapMaxY){
-      Walking();
+      WalkingAnim();
       mapX++;
     }
   }
@@ -59,14 +66,14 @@ void playerMove(){
   if (arduboy.pressed(LEFT_BUTTON)){
   //player movement
     if (x > MinX){
-      Walking();
+      WalkingAnim();
     x--;
-    dir = 'L';
+    playerDir = HorizontalDirection::Left;
     }
 
   //map movement
   if (x == MinX && mapX > 0 && mapX <= mapMaxY){
-    Walking();
+    WalkingAnim();
     mapX--;
   }
   }
@@ -99,17 +106,17 @@ void playerMove(){
 
 
 //animation reset
-  if (walking && arduboy.notPressed(RIGHT_BUTTON) && arduboy.notPressed(LEFT_BUTTON)) walking = false;
-  if (!walking) frame = 0;
+  if (isWalking  && arduboy.notPressed(RIGHT_BUTTON) && arduboy.notPressed(LEFT_BUTTON)) isWalking  = false;
+  if (!isWalking ) frame = 0;
 
   
 //setting direction
-  if (dir == 'L'){
+  if (playerDir == HorizontalDirection::Left){
     sprites.drawPlusMask(x ,playerY,PjWalkingLeft,frame);
   }
 
   
-  if (dir == 'R'){
+  if (playerDir == HorizontalDirection::Right){
     sprites.drawPlusMask(x ,playerY,PjWalkingRight,frame);
   }
 
